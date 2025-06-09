@@ -71,7 +71,8 @@ class SRNetIngerence:
 
     @torch.no_grad()
     def infer(self, i_s, text):
-        i_t, i_s, phash = get_images(image, text, "custom_feed/tmp")
+        i_s = cv2.cvtColor(i_s, cv2.COLOR_RGB2BGR)
+        i_t, i_s, phash = get_images(i_s, text, "custom_feed/tmp")
         i_t, i_s, phash = self.preprocess_image(i_t, i_s, phash)
 
         i_t = i_t[None].to(self.device)
