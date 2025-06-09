@@ -4,11 +4,13 @@ Copyright (c) 2019 Netease Youdao Information Technology Co.,Ltd.
 Licensed under the GPL License 
 Written by Yu Qian
 """
+
 import pygame
 import pygame.locals
 from pygame import freetype
 import numpy as np
 import cv2
+
 
 def render_normal(font, text):
     line_spacing = font.get_sized_height() + 1
@@ -16,18 +18,19 @@ def render_normal(font, text):
     fsize = (round(2.0 * line_bounds.width), round(1.25 * line_spacing))
     surf = pygame.Surface(fsize, pygame.locals.SRCALPHA, 32)
     x, y = 0, line_spacing
-    
+
     rect = font.render_to(surf, (x, y), text)
     rect.x = x + rect.x
     rect.y = y - rect.y
-    
+
     surf = pygame.surfarray.pixels_alpha(surf).swapaxes(0, 1)
     loc = np.where(surf > 20)
     miny, minx = np.min(loc[0]), np.min(loc[1])
     maxy, maxx = np.max(loc[0]), np.max(loc[1])
-    return surf[miny:maxy+1, minx:maxx+1], rect
+    return surf[miny : maxy + 1, minx : maxx + 1], rect
 
-def make_standard_text(font_path, text, shape, padding = 0.1, color = (0, 0, 0), init_fontsize = 25):
+
+def make_standard_text(font_path, text, shape, padding=0.1, color=(0, 0, 0), init_fontsize=25):
     font = freetype.Font(font_path)
     font.antialiased = True
     font.origin = True
@@ -65,29 +68,31 @@ def make_standard_text(font_path, text, shape, padding = 0.1, color = (0, 0, 0),
 
     surf, rect = render_normal(font, text)
     if np.max(np.array(surf.shape) - np.array(target_shape)) > 0:
-        scale = np.min(np.array(target_shape, dtype = np.float32) / np.array(surf.shape, dtype = np.float32))
+        scale = np.min(np.array(target_shape, dtype=np.float32) / np.array(surf.shape, dtype=np.float32))
         to_shape = tuple((np.array(surf.shape) * scale).astype(np.int32)[::-1])
         surf = cv2.resize(surf, to_shape)
-    canvas = np.zeros(shape, dtype = np.uint8)
+    canvas = np.zeros(shape, dtype=np.uint8)
     tly, tlx = int((shape[0] - surf.shape[0]) // 2), int((shape[1] - surf.shape[1]) // 2)
-    canvas[tly:tly+surf.shape[0], tlx:tlx+surf.shape[1]] = surf
-    canvas = ((1. - canvas.astype(np.float32) / 255.) * 127.).astype(np.uint8)
+    canvas[tly : tly + surf.shape[0], tlx : tlx + surf.shape[1]] = surf
+    canvas = ((1.0 - canvas.astype(np.float32) / 255.0) * 127.0).astype(np.uint8)
 
     return cv2.cvtColor(canvas, cv2.COLOR_GRAY2RGB)
-    
+
+
 def main():
     pygame.init()
     freetype.init()
-    font = '/home/qianyu/fonts/english_ttf/arial.ttf'
+    font = "/home/qianyu/fonts/english_ttf/arial.ttf"
     font = freetype.Font(font)
     font.antialiased = True
     font.origin = True
 
-    text = 'canvas'
+    text = "canvas"
     shape = (224, 448)
     i_t = make_standard_text(font, text, shape)
-    cv2.imshow('i_t', i_t)
+    cv2.imshow("i_t", i_t)
     cv2.waitKey()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
