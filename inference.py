@@ -41,7 +41,7 @@ def get_images(i_s, text, tmp_folder):
     return i_t, i_s, phash
 
 
-class SRNetIngerence:
+class SRNetInference:
     def __init__(self, checkpoint, tmp_folder, device="cpu"):
         self.device = device
         self.tmp_folder = tmp_folder
@@ -81,12 +81,14 @@ class SRNetIngerence:
         o_sk, o_t, o_b, o_f = self.G(i_t, i_s, (i_t.shape[2], i_t.shape[3]))
 
         o_f = o_f.squeeze(0).detach().to("cpu")
-        return F.to_pil_image((o_f + 1) / 2)
+        pil_result = F.to_pil_image((o_f + 1) / 2)
+        np_image = np.array(pil_result)
+        return np_image
 
 
 if __name__ == "__main__":
     checkpoint = "trained_final_5M_.model"
-    model = SRNetIngerence(checkpoint, "custom_feed/tmp", device="cpu")
+    model = SRNetInference(checkpoint, "custom_feed/tmp", device="cpu")
 
     image = cv2.imread("custom_feed/labels/005_i_s.png")
     # original_it = cv2.imread("custom_feed/labels/002_i_t.png")
