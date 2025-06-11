@@ -28,7 +28,7 @@ def get_images(i_s, text, tmp_folder):
     os.makedirs(tmp_folder, exist_ok=True)
     i_t = generate_text_image(i_s, text, "SRNetDatagen/arial.ttf")
 
-    phash = str(imagehash.phash(Image.fromarray(i_s))) + "_" + text
+    phash = str(imagehash.phash(Image.fromarray(i_s))) + "_" + str(hash(text))
 
     i_s_path = os.path.join(tmp_folder, phash + "_i_s.png")
     i_t_path = os.path.join(tmp_folder, phash + "_i_t.png")
